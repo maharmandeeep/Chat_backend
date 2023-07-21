@@ -7,6 +7,9 @@ const Token_make=(res,msg,user)=>{
         
         const token =jwt.sign({_id:user._id},process.env.JWTsecuritykey);
 
+       
+        
+
         res.status(200).cookie("token",token,{
             httpOnly:true,
             maxAge:24*60*60*1000,
@@ -16,7 +19,8 @@ const Token_make=(res,msg,user)=>{
         }
         ).json({
             status:true,
-            msg: msg
+            msg: msg,
+            user,
         })
     } catch (error) {
         console.log(error);

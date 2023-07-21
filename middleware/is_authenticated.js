@@ -4,6 +4,8 @@ import Users from "../Schema/user_Schema.js";
 
 
 const isAuthenticated=async (req,res,next)=>{
+
+
     try {
         const{token}=req.cookies;
 
@@ -17,23 +19,27 @@ const isAuthenticated=async (req,res,next)=>{
                
             
         }
+        else{
+
+            const decoded=jwt.verify(token,process.env.JWTsecuritykey);
+    
+            req.user=await Users.findById(decoded._id);
+          
+          
+            next();
+
+
+        }
        
-      const decoded=jwt.verify(token,process.env.JWTsecuritykey);
-    
-      req.user=await Users.findById(decoded._id);
-    
-    
-      next();
-    
+
         
     } catch (error) {
-        next(error)
+        console.log(error);
     }
-
+    
    
-
-
-
+    
+ 
 }
 
 export default isAuthenticated;

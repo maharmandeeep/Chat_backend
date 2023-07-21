@@ -71,7 +71,12 @@ async function Login(req, res, next) {
 
     // if all good we can make a token
 
-    Token_make(res, "successfully Login", user);
+    const userWithoutPassword = {
+      ...user.toObject(),
+      password: undefined
+    };
+     
+    Token_make(res, "successfully Login", userWithoutPassword);
   } catch (error) {
     next(error);
   }
@@ -91,4 +96,78 @@ const getmydata=(req,res,next)=>{
 
 }
 
-export { Registor, Login ,getmydata};
+
+//set avatr funtion
+
+async function setAvatar(req,res,next){
+
+  try {
+    const id=req.params.id;
+    const avatarimage=req.body.image;
+
+    const user=await Users.findByIdAndUpdate(id,
+      {
+        avtarImage:avatarimage,
+        isAvatarImageSet:true,
+      },{
+        new:true
+      }
+      )
+
+     res.status(200).json({
+      success:user.isAvatarImageSet,
+      msg:"Your avatar is set for your profile",
+      image:user.avtarImage
+
+     })
+
+ 
+   
+  } catch (error) {
+    next(error)
+  }
+
+}
+
+//this functon is to get all user data
+ const getAllUsers = async (req, res, next) => {
+  try {
+    const users = await Users.find({ _id: { $ne: req.params.id } }).select([
+      "email",
+      "name",
+      "avtarImage",
+      "_id",
+    ]);
+    return res.json(users);
+  } catch (ex) {
+    next(ex);
+  }
+};
+
+
+
+async function logout(req,res,next){
+
+  try {
+    res
+    .status(200)
+    .cookie("token", "", {
+      expires: new Date(Date.now()),
+      sameSite:(process.env.NODE_env==="development")?"lax":"none",
+      secure:(process.env.NODE_env==="development")?false:true,
+    })
+    .json({
+      success: "true",
+      msg: "logout sucessfully",
+    });
+    
+  } catch (error) {
+    next(error)
+  }
+
+
+}    
+
+
+
+export { Registor, Login ,getmydata,setAvatar,getAllUsers,logout};

@@ -4,6 +4,7 @@ import user_router from "./route/user_routing.js"
 import cors from "cors";
 import { error_handler } from "./error_middleware/error_handler.js";
 import cookieParser from  "cookie-parser";
+import M_router from "./route/message_routeing.js";
 
 export const app=express();
 
@@ -31,7 +32,9 @@ app.use(cookieParser());
 
 
 //routing define 
-app.use("/api/v1/user",user_router);
+app.use("/api/v1/user",user_router); 
+app.use("/api/v1/message",M_router)
+
 
 
 
